@@ -19,11 +19,8 @@ def has_special_characters(password):
 
 
 def has_number_phone(password):
-    return bool(re.search(r'\+?\d{1,3}?[- .]?\(?(?:\d{2,3})\)'
-                          r'?[- .]?\d\d\d[- .]?\d\d\d\d',
-                          password
-                          )
-                )
+    pattern = r'\+?\d{1,3}?[- .]?\(?(?:\d{2,3})\)?[- .]?\d\d\d[- .]?\d\d\d\d'
+    return bool(re.search(pattern, password))
 
 
 def has_email(password):
@@ -31,13 +28,16 @@ def has_email(password):
 
 
 def get_password_strength(password):
-    password_complexity = len(password) >= 8
-    password_complexity += has_lower_case(password)
-    password_complexity += has_upper_case(password) * 2
-    password_complexity += has_numbers(password) * 2
-    password_complexity += has_special_characters(password) * 2
-    password_complexity += (not has_number_phone(password)) * 1
-    password_complexity += (not has_email(password)) * 1
+    verification_functions = [
+        len(password) >= 8,
+        has_lower_case(password),
+        has_upper_case(password) * 2,
+        has_numbers(password) * 2,
+        has_special_characters(password) * 2,
+        (not has_number_phone(password)) * 1,
+        (not has_email(password)) * 1
+    ]
+    password_complexity = sum(verification_functions)
     return password_complexity
 
 
